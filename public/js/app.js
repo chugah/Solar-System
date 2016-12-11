@@ -13,64 +13,58 @@ BjsApp.init = function(){
 	var scene = new BABYLON.Scene(engine);
 	scene.clearColor = new BABYLON.Color3(0, 0, 0);
 
-	//create camera
-	var camera = new BABYLON.ArcRotateCamera('camera', 0, 0, 15, BABYLON.Vector3.Zero(), scene);
-	// var camera = new BABYLON.TouchCamera('camera', BABYLON.Vector3.Zero(), scene); applies to mobile devices
+	// Setup camera
+    var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0, 10, BABYLON.Vector3.Zero(), scene);
+    camera.setPosition(new BABYLON.Vector3(-10, 10, 0));
+    camera.attachControl(canvas, true);
 
-	//Let user move the camera
-	camera.attachControl(canvas);
-	camera.upperRadiusLimit = 100; // not needed for TouchCamera when used on mobile devices
-	
-	// light
-	var light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-	light.intensity = 0.5;
-	light.groundColor = new BABYLON.Color3(0, 0, 1);
+    // Lights
+    var light0 = new BABYLON.PointLight("Omni0", new BABYLON.Vector3(0, 10, 0), scene);
+    var light1 = new BABYLON.PointLight("Omni1", new BABYLON.Vector3(0, -10, 0), scene);
+    var light2 = new BABYLON.PointLight("Omni2", new BABYLON.Vector3(10, 0, 0), scene);
+    var light3 = new BABYLON.DirectionalLight("Dir0", new BABYLON.Vector3(1, -1, 0), scene);
 
-	// Create the sun and sunlight
-	var sunMaterial = new BABYLON.StandardMaterial('sunMaterial', scene);
-	sunMaterial.emissiveTexture = new BABYLON.Texture('images/sun.jpg', scene);
-	sunMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-	sunMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    var material = new BABYLON.StandardMaterial("kosh", scene);
+    var sphere = BABYLON.Mesh.CreateSphere("Sphere", 16, 3, scene);
 
-	var sun = BABYLON.Mesh.CreateSphere('sun', 16, 4, scene);
-	sun.material= sunMaterial;
+    // Creating light sphere
+    var lightSphere0 = BABYLON.Mesh.CreateSphere("Sphere0", 16, 0.5, scene);
+    var lightSphere1 = BABYLON.Mesh.CreateSphere("Sphere1", 16, 0.5, scene);
+    var lightSphere2 = BABYLON.Mesh.CreateSphere("Sphere2", 16, 0.5, scene);
 
-	var sunLight = new BABYLON.PointLight('sunLight', BABYLON.Vector3.Zero(), scene);
-	sunLight.intensity = 2;
+    lightSphere0.material = new BABYLON.StandardMaterial("red", scene);
+    lightSphere0.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere0.material.specularColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere0.material.emissiveColor = new BABYLON.Color3(1, 0, 0);
 
-	// adding planets to the solar system
-	var planetMaterial = new BABYLON.StandardMaterial('planetMat', scene);
-	planetMaterial.diffuseTexture = new BABYLON.Texture('images/sand.jpg', scene);
-	planetMaterial.specularColor = new BABYLON.Color3(0, 0 ,0);
-	
-	var planet1 = BABYLON.Mesh.CreateSphere('planet1', 16, 1, scene);
-	planet1.position.x = 4;
-	planet1.material = planetMaterial;
-	planet1.orbit = {
-		radius: planet1.position.x,
-		speed: 0.01,
-		angle: 0
-	};
+    lightSphere1.material = new BABYLON.StandardMaterial("green", scene);
+    lightSphere1.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere1.material.specularColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere1.material.emissiveColor = new BABYLON.Color3(0, 1, 0);
 
-	var planet2 = BABYLON.Mesh.CreateSphere('planet2', 16, 1, scene);
-	planet2.position.x = 6;
-	planet2.material = planetMaterial;
-	planet2.orbit = {
-		radius: planet2.position.x,
-		speed: -0.01,
-		angle: 0
-	};
+    lightSphere2.material = new BABYLON.StandardMaterial("blue", scene);
+    lightSphere2.material.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere2.material.specularColor = new BABYLON.Color3(0, 0, 0);
+    lightSphere2.material.emissiveColor = new BABYLON.Color3(0, 0, 1);
 
-	var planet3 = BABYLON.Mesh.CreateSphere('planet3', 16, 1, scene);
-	planet3.position.x = 8;
-	planet3.material = planetMaterial;
-	planet3.orbit = {
-		radius: planet3.position.x,
-		speed: 0.02,
-		angle: 0
-	};
+    // Sphere material
+    material.diffuseColor = new BABYLON.Color3(1, 1, 1);
+    sphere.material = material;
 
-	// create skybox for background
+    // Lights colors
+    light0.diffuse = new BABYLON.Color3(1, 0, 0);
+    light0.specular = new BABYLON.Color3(1, 0, 0);
+
+    light1.diffuse = new BABYLON.Color3(0, 1, 0);
+    light1.specular = new BABYLON.Color3(0, 1, 0);
+
+    light2.diffuse = new BABYLON.Color3(0, 0, 1);
+    light2.specular = new BABYLON.Color3(0, 0, 1);
+
+    light3.diffuse = new BABYLON.Color3(1, 1, 1);
+    light3.specular = new BABYLON.Color3(1, 1, 1);
+
+    // create skybox for background
 	var skybox = BABYLON.Mesh.CreateBox('skybox', 1000, scene);
 	var skyboxMaterial = new BABYLON.StandardMaterial('skyboxMat', scene);
 
@@ -90,20 +84,19 @@ BjsApp.init = function(){
 	skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('images/skybox', scene);
 	skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
 
-	// enable animate or movement of planets
-	scene.beforeRender = function() {
-		planet1.position.x = planet1.orbit.radius * Math.sin(planet1.orbit.angle);
-		planet1.position.z = planet1.orbit.radius * Math.cos(planet1.orbit.angle);
-		planet1.orbit.angle += planet1.orbit.speed;
+    // Animations
+    var alpha = 0;
+    scene.beforeRender = function () {
+        light0.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, 10 * Math.cos(alpha));
+        light1.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, -10 * Math.cos(alpha));
+        light2.position = new BABYLON.Vector3(10 * Math.cos(alpha), 0, 10 * Math.sin(alpha));
 
-		planet2.position.x = planet2.orbit.radius * Math.sin(planet2.orbit.angle);
-		planet2.position.z = planet2.orbit.radius * Math.cos(planet2.orbit.angle);
-		planet2.orbit.angle += planet2.orbit.speed;
+        lightSphere0.position = light0.position;
+        lightSphere1.position = light1.position;
+        lightSphere2.position = light2.position;
 
-		planet3.position.x = planet3.orbit.radius * Math.sin(planet3.orbit.angle);
-		planet3.position.z = planet3.orbit.radius * Math.cos(planet3.orbit.angle);
-		planet3.orbit.angle += planet3.orbit.speed;
-	};
+        alpha += 0.01;
+    };
 
 
 	// render the scene

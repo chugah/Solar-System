@@ -5,14 +5,12 @@ class Main extends Component {
     super(props);
   }
   render() {
+    var BjsApp = BjsApp || {};
+    
     return (
       <div>
-        <div>
-          <div>
-            <canvas id="renderCanvas"></canvas> 
-          </div>         
-        </div>
-      </div>
+        <canvas id="renderCanvas"></canvas> 
+      </div>         
     );
   }
 }
