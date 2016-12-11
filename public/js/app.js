@@ -88,8 +88,8 @@ BjsApp.init = function(){
     var alpha = 0;
     scene.beforeRender = function () {
         light0.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, 10 * Math.cos(alpha));
-        light1.position = new BABYLON.Vector3(10 * Math.sin(alpha), 0, -10 * Math.cos(alpha));
-        light2.position = new BABYLON.Vector3(10 * Math.cos(alpha), 0, 10 * Math.sin(alpha));
+        light1.position = new BABYLON.Vector3(5 * Math.sin(alpha), 0, -5 * Math.cos(alpha));
+        light2.position = new BABYLON.Vector3(20 * Math.cos(alpha), 0, 20 * Math.sin(alpha));
 
         lightSphere0.position = light0.position;
         lightSphere1.position = light1.position;
